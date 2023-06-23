@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../style/weather.css" />
+    <title>Weather APP</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="weather-frame">
+        <div class="weather-frame-loading">
+          <div class="lds-default">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+        <div class="search">
+          <input type="text" class="search-city" />
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <div class="inner">
+          <p class="time_text"></p>
+          <p class="city_text"></p>
+          <i class="weather_icon"></i>
+          <p class="weather_text"></p>
+          <h1 class="temp_text"></h1>
+          <div class="weather-description">
+            <span class="feels_like_temp"
+              >Feels Like <i class="fa-solid fa-caret-right"></i>
+              <p class="feels_text"></p
+            ></span>
+            <span class="humidity"
+              >Humidity <i class="fa-solid fa-caret-right"></i>
+              <p class="humidity_text"></p
+            ></span>
+            <span class="wind"
+              >Wind <i class="fa-solid fa-caret-right"></i>
+              <p class="wind_text"></p
+            ></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script
+    src="https://kit.fontawesome.com/25567bc514.js"
+    crossorigin="anonymous"
+  ></script>
+  <script src="../apikey.js"></script>
+  <script>
+    const $loading = document.querySelector(".weather-frame-loading");
+
+    const $timeText = document.querySelector(".time_text");
+    const $cityText = document.querySelector(".city_text");
+    const $tempText = document.querySelector(".temp_text");
+    const $weatherText = document.querySelector(".weather_text");
+    const $weatherIcon = document.querySelector(".weather_icon");
+    const $feelsLikeText = document.querySelector(".feels_text");
+    const $humidity = document.querySelector(".humidity_text");
+    const $wind = document.querySelector(".wind_text");
+    const $searchCity = document.querySelector(".search-city");
+    const $glass = document.querySelector(".fa-magnifying-glass");
+    $glass.addEventListener("click", function () {
+      $searchCity.classList.toggle("clicked");
+      this.classList.toggle("clicked");
+      $searchCity.focus();
+    });
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    const weekNames = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    function timeDisplay() {
+      let today = new Date();
+      const month = monthNames[today.getMonth()];
+      const day = weekNames[today.getDay()];
+      const date = today.getDate();
+      return day + ", " + month + " " + date;
+    }
+
+    function paintWeatherInfo(data) {
+      let tempText = Math.round(data.main.temp - 273) + "°C";
+      let feelsTempText = Math.round(data.main.feels_like - 273) + "°C";
+      let humidity = data.main.humidity + "%";
+      let wind = data.wind.speed + "m/s";
+      let weather = data.weather[0].main;
+      $timeText.innerHTML = timeDisplay();
+      $tempText.innerHTML = tempText;
+      $weatherText.innerHTML = weather;
+      $weatherIcon.className += paintWeatherIcon(data.weather);
+      $feelsLikeText.innerHTML = " " + feelsTempText;
+      $humidity.innerHTML = " " + humidity;
+      $wind.innerHTML = " " + wind;
+      $loading.style.display = "none";
+    }
+
+    function paintWeatherIcon(weather) {
+      let weatherId = weather[0].id;
+      let weatherIdFirstCode = (weather[0].id + "")[0];
+      let weatherIcon = "";
+
+      if (weatherId === 800) {
+        weatherIcon = " fa-solid fa-sun";
+        return weatherIcon;
+      }
+
+      if (weatherIdFirstCode === "2") {
+        weatherIcon = " fa-solid fa-cloud-bolt";
+        return weatherIcon;
+      } else if (weatherIdFirstCode === "3" || weatherIdFirstCode === "5") {
+        weatherIcon = " fa-solid fa-cloud-rain";
+        return weatherIcon;
+      } else if (weatherIdFirstCode === "6") {
+        weatherIcon = " fa-solid fa-snowflake";
+        return weatherIcon;
+      } else if (weatherIdFirstCode === "7") {
+        weatherIcon = " fa-solid fa-smog";
+        return weatherIcon;
+      } else if (weatherIdFirstCode === "8") {
+        weatherIcon = " fa-solid fa-cloud";
+        return weatherIcon;
+      }
+    }
+
+    function geoOk(position) {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+      const urlWeather = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
+      const urlGeo = `http://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=5&appid=${API_KEY}`;
+      fetch(urlGeo)
+        .then((response) => response.json())
+        .then((data) => {
+          $cityText.innerHTML = data[0].name + ", " + data[0].country;
+        });
+      fetch(urlWeather)
+        .then((response) => response.json())
+        .then((data) => {
+          paintWeatherInfo(data);
+        });
+    }
+    function geoError() {
+      console.log("위치를 찾을 수 없습니다.");
+    }
+    navigator.geolocation.getCurrentPosition(geoOk, geoError);
+
+    $searchCity.addEventListener("keydown", function (event) {
+      if (event.keyCode === 13) {
+        let city = this.value;
+        let urlGeo = `http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=5&appid=${API_KEY}`;
+        fetch(urlGeo)
+          .then((response) => response.json())
+          .then((data) => {
+            $cityText.innerHTML = data[0].name + ", " + data[0].country;
+            let lat = data[0].lat;
+            let lon = data[0].lon;
+            let urlWeather = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
+            fetch(urlWeather)
+              .then((response) => response.json())
+              .then((data) => {
+                paintWeatherInfo(data);
+              });
+          });
+      }
+    });
+    $searchCity.addEventListener("focusout", function () {
+      this.classList.remove("clicked");
+      $glass.classList.remove("clicked");
+      this.value = "";
+    });
+  </script>
+</html>

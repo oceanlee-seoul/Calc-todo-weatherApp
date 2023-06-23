@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../style/calc.css" />
+    <title>Calculator</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="calc-body">
+        <div class="calc-topbar">
+          <span>Calculator</span>
+          <div class="topbar-buttons">
+            <span>_</span>
+            <span><div class="square"></div></span>
+            <span>X</span>
+          </div>
+        </div>
+        <div class="under-bar">
+          <div class="under-bar-items">
+            <span>Edit</span>
+            <span>View</span>
+            <span>Help</span>
+          </div>
+          <hr />
+        </div>
+        <div class="calc-display">
+          <span id="display">0</span>
+        </div>
+        <div class="calc-buttons-container">
+          <div class="calc-buttons">
+            <div class="calc-button btnFunction" id="ac">AC</div>
+            <div class="calc-button btnFunction" id="ce">CE</div>
+            <div class="calc-button btnFunction" id="percent">%</div>
+            <div class="calc-button btnFunction" id="divide">/</div>
+          </div>
+          <div class="calc-buttons">
+            <div class="calc-button btnNumber" id="seven">7</div>
+            <div class="calc-button btnNumber" id="eight">8</div>
+            <div class="calc-button btnNumber" id="nine">9</div>
+            <div class="calc-button btnFunction" id="multip">X</div>
+          </div>
+          <div class="calc-buttons">
+            <div class="calc-button btnNumber" id="four">4</div>
+            <div class="calc-button btnNumber" id="five">5</div>
+            <div class="calc-button btnNumber" id="six">6</div>
+            <div class="calc-button" id="sub">-</div>
+          </div>
+          <div class="calc-buttons">
+            <div class="calc-button btnNumber" id="one">1</div>
+            <div class="calc-button btnNumber" id="two">2</div>
+            <div class="calc-button btnNumber" id="three">3</div>
+          </div>
+          <div class="calc-buttons">
+            <div class="calc-button btnNumber" id="zero">0</div>
+            <div class="calc-button btnFunction" id="point">.</div>
+            <div class="calc-button btnFunction" id="compute">=</div>
+          </div>
+          <div class="calc-buttons-plus btnFunction" id="plus">+</div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const display = document.getElementById("display");
+      const btnNumbers = document.querySelectorAll(".btnNumber");
+      const btnFunctions = document.querySelectorAll(".btnFunction");
+      const operand = [];
+      let op = "";
+
+      const numbersFunction = function () {
+        if (display.innerHTML === "0" && operand.length === 0 && op === "") {
+          display.innerHTML = this.textContent;
+        } else {
+          display.innerHTML += this.textContent;
+        }
+      };
+      const othersFunction = function () {
+        const action = this.textContent;
+        console.log(action);
+        switch (action) {
+          case "AC":
+            operand.length = 0;
+            op = "";
+            display.innerHTML = "0";
+            break;
+          case "CE":
+            break;
+          case "%":
+            break;
+          case "/":
+            break;
+          case "X":
+            break;
+          case "-":
+            break;
+          case "+":
+            op = action;
+            operand.push(parseInt(display.innerHTML));
+            break;
+          case ".":
+            break;
+          case "=":
+            break;
+        }
+      };
+
+      btnNumbers.forEach((node) => {
+        node.addEventListener("click", numbersFunction);
+      });
+      btnFunctions.forEach((node) => {
+        node.addEventListener("click", othersFunction);
+      });
+    </script>
+  </body>
+</html>

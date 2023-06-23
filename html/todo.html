@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ToDos</title>
+    <!-- XEICON CDN -->
+    <link
+      rel="stylesheet"
+      href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css"
+    />
+    <link rel="stylesheet" href="../style/todos.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="todos-wrapper">
+        <h1 class="main-title">todos</h1>
+        <div class="todos-inputBox">
+          <i class="xi-angle-down"></i
+          ><input
+            type="text"
+            class="todos-input"
+            placeholder="What Needs to be done?"
+          />
+        </div>
+        <div class="todos-lists"></div>
+        <div class="todos-controller">
+          <div class="todos-left-items-display">0 item left</div>
+          <div class="todos-buttons-show">
+            <button class="btn_all">All</button>
+            <button class="btn_active">Active</button>
+            <button class="btn_completed">Completed</button>
+          </div>
+          <div class="todos-clear">
+            <button class="btn_clear">Clear completed</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      let state = parseInt(localStorage.getItem("state")) || 1;
+      const todosKey = "TODOS-KEY";
+      const todosInput = document.querySelector(".todos-input");
+      const todosLists = document.querySelector(".todos-lists");
+      let todosArray = JSON.parse(localStorage.getItem(todosKey)) || [];
+      const itemLeftDisplay = document.querySelector(
+        ".todos-left-items-display"
+      );
+      const completedClearBtn = document.querySelector(".btn_clear");
+      const btnAll = document.querySelector(".btn_all");
+      // btnAll.classList.add("active");
+      const btnActive = document.querySelector(".btn_active");
+      const btnCompletedShow = document.querySelector(".btn_completed");
+      console.log(todosArray);
+      if (state === 1) {
+        btnAll.classList.add("active");
+        btnActive.classList.remove("active");
+        btnCompletedShow.classList.remove("active");
+      } else if (state === 3) {
+        btnCompletedShow.classList.add("active");
+        btnAll.classList.remove("active");
+        btnActive.classList.remove("active");
+      } else if (state === 2) {
+        btnActive.classList.add("active");
+        btnAll.classList.remove("active");
+        btnCompletedShow.classList.remove("active");
+      }
+
+      const checkedFunction = function () {
+        const checkedId = parseInt(this.id);
+        const checkedIndex = todosArray.findIndex((v) => {
+          return v.id === checkedId;
+        });
+        if (this.className === "xi-check-circle-o") {
+          this.className = "xi-check-circle";
+          todosArray[checkedIndex].isCompleted = true;
+        } else {
+          this.className = "xi-check-circle-o";
+          todosArray[checkedIndex].isCompleted = false;
+        }
+        localStorage.setItem(todosKey, JSON.stringify(todosArray));
+        paintTodo();
+      };
+
+      const deleteBtnFunction = function () {
+        const checkedId = parseInt(this.id);
+        const checkedIndex = todosArray.findIndex((v) => {
+          return v.id === checkedId;
+        });
+        todosArray.splice(checkedIndex, 1);
+        localStorage.setItem(todosKey, JSON.stringify(todosArray));
+        paintTodo();
+      };
+
+      const clearCompletedFunction = function () {
+        const leftItem = todosArray.filter(
+          (item) => item.isCompleted === false
+        );
+        todosArray = leftItem;
+        localStorage.setItem(todosKey, JSON.stringify(todosArray));
+        paintTodo();
+      };
+      completedClearBtn.addEventListener("click", clearCompletedFunction);
+
+      const itemLeftDisplayFunction = function () {
+        const itemLeft = todosArray.filter(
+          (item) => item.isCompleted === false
+        );
+        if (itemLeft.length > 1) {
+          itemLeftDisplay.innerHTML = `${itemLeft.length} ` + "items left";
+        } else {
+          itemLeftDisplay.innerHTML = `${itemLeft.length} ` + " item left";
+        }
+      };
+
+      const showAllBtnFunction = function () {
+        this.classList.add("active");
+        btnActive.classList.remove("active");
+        btnCompletedShow.classList.remove("active");
+        state = 1;
+        localStorage.setItem("state", state);
+        paintTodo();
+      };
+      btnAll.addEventListener("click", showAllBtnFunction);
+
+      const showActiveBtnFunction = function () {
+        this.classList.add("active");
+        btnAll.classList.remove("active");
+        btnCompletedShow.classList.remove("active");
+        state = 2;
+        localStorage.setItem("state", state);
+        paintTodo();
+      };
+      btnActive.addEventListener("click", showActiveBtnFunction);
+
+      const showCompletedBtnFunction = function () {
+        this.classList.add("active");
+        btnAll.classList.remove("active");
+        btnActive.classList.remove("active");
+
+        state = 3;
+        localStorage.setItem("state", state);
+        paintTodo();
+      };
+      btnCompletedShow.addEventListener("click", showCompletedBtnFunction);
+
+      const paintTodo = function () {
+        let todos = todosArray;
+        if (todosLists.hasChildNodes()) {
+          todosLists.innerHTML = "";
+        }
+
+        if (state === 2) {
+          todos = todos.filter((item) => item.isCompleted === false);
+        } else if (state === 3) {
+          todos = todos.filter((item) => item.isCompleted === true);
+        }
+
+        todos.forEach((todo, index) => {
+          const todosList = document.createElement("div");
+          todosList.className = "todos-list";
+          const i = document.createElement("i");
+          if (todo.isCompleted === false) {
+            i.className = "xi-check-circle-o";
+          } else {
+            i.className = "xi-check-circle";
+          }
+          i.id = todo.id;
+          i.addEventListener("click", checkedFunction);
+          const input = document.createElement("input");
+          input.type = "text";
+          input.className = "todos-text";
+          input.readOnly = true;
+          input.value = todo.value;
+          const deleteBtn = document.createElement("i");
+          deleteBtn.className = "xi-close";
+          deleteBtn.id = todo.id;
+          deleteBtn.addEventListener("click", deleteBtnFunction);
+          todosList.appendChild(i);
+          todosList.appendChild(input);
+          todosList.appendChild(deleteBtn);
+          todosLists.appendChild(todosList);
+        });
+        itemLeftDisplayFunction();
+      };
+
+      if (!!todosArray.length) {
+        paintTodo();
+      }
+
+      todosInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          e.stopPropagation();
+          todosArray.push({
+            id: Date.now(),
+            value: todosInput.value,
+            isCompleted: false,
+          });
+          localStorage.setItem(todosKey, JSON.stringify(todosArray));
+          paintTodo();
+          todosInput.value = "";
+        }
+      });
+    </script>
+  </body>
+</html>

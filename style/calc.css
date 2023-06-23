@@ -1,0 +1,210 @@
+@font-face {
+  font-family: w95;
+  src: url("../style/W95FA.otf");
+}
+
+* {
+  user-select: none;
+}
+body {
+  margin: 0;
+  box-sizing: border-box;
+  position: relative;
+  height: 100vh;
+  font-family: w95;
+  background-color: #018281;
+}
+
+.calc-body {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 440px;
+  height: 590px;
+  border-top: 5px solid white;
+  border-left: 5px solid white;
+  border-right: 5px solid black;
+  border-bottom: 5px solid black;
+  text-align: center;
+  overflow: hidden;
+  background-color: #b8b8b8;
+}
+
+/* Calc-TopBar */
+.calc-topbar {
+  background-color: #04007e;
+  position: absolute;
+  width: 100%;
+  height: 35px;
+  display: flex;
+  justify-content: space-between;
+}
+.calc-topbar > span {
+  color: white;
+  font-size: 30px;
+  margin-top: 5px;
+  margin-left: 5px;
+}
+.topbar-buttons {
+  display: flex;
+  width: 25%;
+  justify-content: space-around;
+}
+.topbar-buttons span {
+  margin-top: 4px;
+  width: 30px;
+  height: 25px;
+  border: 1px solid black;
+  border-top: 1px solid white;
+  border-left: 1px solid white;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+  background-color: #b8b8b8;
+  color: black;
+  font-weight: bolder;
+  font-size: 30px;
+  position: relative;
+}
+.topbar-buttons span .square {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 15px;
+  height: 12px;
+  border: 3px solid #ddd;
+  border-top: 6px solid #ddd;
+}
+
+/* Underbar */
+.under-bar {
+  position: absolute;
+  width: 98%;
+  height: 30px;
+  top: 40px;
+  left: 5px;
+}
+.under-bar hr {
+  border: 1;
+  height: 1.2px;
+}
+.under-bar-items {
+  display: flex;
+  justify-content: space-between;
+  width: 150px;
+}
+.under-bar-items span {
+  font-size: 25px;
+}
+.under-bar-items span:before {
+  content: "_";
+  position: absolute;
+  top: 4px;
+}
+.under-bar-items span:first-child::before {
+  left: -1px;
+}
+/* Calc-Display */
+.calc-display {
+  position: absolute;
+  width: 100%;
+  height: 100px;
+  top: 70px;
+}
+.calc-display span {
+  background-color: white;
+  display: inline-block;
+  width: 90%;
+  height: 70px;
+  margin-top: 12.5px;
+  padding-right: 10px;
+  border-top: 3px solid black;
+  border-left: 3px solid black;
+  border-right: 3px solid #ccc;
+  border-bottom: 3px solid #ccc;
+  font-size: 50px;
+  text-align: end;
+  line-height: 70px;
+}
+
+/* Calc Buttons */
+.calc-buttons-container {
+  margin-top: 170px;
+  height: 70%;
+  width: 95%;
+  margin-left: 10px;
+}
+.calc-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.calc-buttons:nth-child(4),
+.calc-buttons:nth-child(5) {
+  width: 73.5%;
+}
+.calc-button {
+  height: 66px;
+  width: 81px;
+  z-index: 99;
+}
+.calc-button,
+.calc-buttons-plus {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 30px;
+  background-color: white;
+  border-top: 3.5px solid white;
+  border-left: 3.5px solid white;
+  border-right: 3.5px solid black;
+  border-bottom: 3.5px solid black;
+}
+
+.calc-button:active,
+.calc-buttons-plus:active {
+  border-top: 3.5px solid black;
+  border-left: 3.5px solid black;
+  border-right: 3.5px solid white;
+  border-bottom: 3.5px solid white;
+  background-color: #aaa;
+}
+
+.calc-buttons-plus {
+  position: absolute;
+  height: 150px;
+  width: 80px;
+  bottom: 15px;
+  right: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#ac,
+#ce {
+  color: crimson;
+}
+#divide,
+#percent,
+#multip,
+#sub,
+#plus,
+#compute,
+#point {
+  color: red;
+}
+#one,
+#two,
+#three,
+#four,
+#five,
+#six,
+#seven,
+#eight,
+#nine,
+#zero {
+  color: blue;
+}
